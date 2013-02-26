@@ -13,3 +13,5 @@
 .widget button.selected { border: 1px solid red; }
 
 section h3 { color: #aaf !important; }
+
+.result { color: #aaf; }
