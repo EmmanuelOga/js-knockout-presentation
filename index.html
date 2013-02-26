@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Data Models for Javascript Applications</title>
+
+<meta name="description" content="Structuring javascript applications." />
+<meta name="author" content="C. Gray - E. Oga">
+
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<link rel="stylesheet" href="css/reveal.min.css">
+<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+<!-- For syntax highlighting -->
+<link rel="stylesheet" href="lib/css/zenburn.css">
+
+<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+<script>
+document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+</script>
+
+<!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+<![endif]-->
+</head>
+
+<body>
+
+<div class="reveal">
+  <!-- Any section element inside of this container is displayed as a slide -->
+  <div class="slides">
+
+    <section>
+      <h1>Data Models for Javascript Apps</h1>
+      <h3>Cool subtitle here.</h3>
+    </section>
+
+    <section>
+      <h3>Business requirements</h3>
+      <p>
+        <ul>
+          <li>Allow selection of date ranges with <strong>from</strong> and <strong>to</strong> fields.</li>
+          <li>Display Range selection buttons.</li>
+          <li>Display the range button as pushed if the range is selected.</li>
+        </ul>
+      </p>
+      <p>
+        <img src="images/requirement.png" />
+      </p>
+      <p>The solution...</p>
+      <h2 class="fragment">jQuery all the things!</h2>
+    </section>
+
+    <section>
+      <section>
+        <h2>A first implementation</h2>
+
+        <h3>Define Markup</h3>
+        <pre><code contenteditable>
+&lt;div id="widget1" class="widget"&gt;
+  &lt;input class="from" type="text" value="01/01/2013" /&gt;
+  &lt;input class="to" type="text" value="02/31/2013" /&gt;
+  &lt;button class="month"&gt;Month&lt;/button&gt;
+  &lt;button class="week"&gt;Week&lt;/button&gt;
+  &lt;button class="all"&gt;All&lt;/button&gt;
+  &lt;br/&gt;
+  &lt;button&gt;Profit!&lt;/button&gt;
+&lt;/div&gt;
+        </code></pre>
+      </section>
+
+      <section>
+        <h3>Locate relevant DOM elements and Initialize</h3>
+        <pre><code contenteditable>
+var $widget = $("#widget1");
+
+if (!$widget.length) return;
+
+var $from         = $widget.find(".from");
+var $to           = $widget.find(".to");
+var $buttonMonth  = $widget.find(".month");
+var $buttonWeek   = $widget.find(".week");
+var $buttonAll    = $widget.find(".all");
+var $buttonProfit = $widget.find("button:last");
+
+var min = $from.val(), max = $to.val();
+
+var monthAgo = "02/01/2013", weekAgo  = "02/24/2013";
+        </code></pre>
+      </section>
+
+      <section>
+        <h3>Capture DOM elements events</h3>
+        <pre><code contenteditable>
+// One of these blocks for each range: all, month, week
+$buttonMonth.on("click", function(ev){
+  $buttonMonth.addClass("selected");
+  $buttonWeek.removeClass("selected"); $buttonAll.removeClass("selected");
+  $from.val(monthAgo); $to.val(max);
+});
+        </code></pre>
+      </section>
+
+      <section>
+        <h3>Capture Widget State</h3>
+        <pre><code contenteditable>
+$buttonProfit.on("click", function(ev){
+  var range = $widget.find("button.selected:first").attr("class");
+  alert(range);
+});
+        </code></pre>
+      </section>
+
+      <section>
+        <h3>End Result</h3>
+        <div id="widget1" class="widget">
+          <input class="from" type="text" value="01/01/2013" />
+          <input class="to" type="text" value="02/31/2013" />
+          <button class="month">Month</button>
+          <button class="week">Week</button>
+          <button class="all">All</button>
+          <br/>
+          <button>Show current range</button>
+        </div>
+        <br/>
+        <p class="fragment">Oh no...</p>
+        <ul>
+          <li class="fragment">The inputs are not synchronized with the buttons</li>
+          <li class="fragment">What is the source of truth about the selected range? the button with class "selected" or the from-to ranges?</li>
+          <li class="fragment">Can be either one!</li>
+        </ul>
+      </section>
+    </section>
+
+
+
+
+    <section>
+      <section>
+        <h3>Try #2: keeping everything in sync</h3>
+
+        <pre><code contenteditable>
+// Sync buttons with from-to ranges
+var markSelectedRange = function() {
+  $buttonMonth.removeClass("selected")
+  $buttonWeek.removeClass("selected")
+  $buttonAll.removeClass("selected");
+
+  if ($from.val() == min && $to.val() == max)
+    $buttonAll.addClass("selected");
+
+  if ($from.val() == monthAgo && $to.val() == max)
+    $buttonMonth.addClass("selected");
+
+  if ($from.val() == weekAgo && $to.val() == max)
+    $buttonWeek.addClass("selected");
+}
+        </code></pre>
+      </section>
+
+      <section>
+        <h3>Use markSelectedRange to sync up the widget elems</h3>
+
+        <pre><code contenteditable>
+// One of these for each range: month, all, week
+$buttonMonth.on("click", function(ev){
+  $from.val(monthAgo); $to.val(max); markSelectedRange();
+});
+
+$buttonProfit.on("click", function(ev){
+  var range = $("button.selected:first").attr("class");
+  alert(range);
+});
+
+$from.on("keyup", markSelectedRange); $to.on("keyup", markSelectedRange);
+        </code></pre>
+      </section>
+
+      <section>
+        <h3>End Result</h3>
+        <div id="widget2" class="widget">
+          <input class="from" type="text" value="01/01/2013" />
+          <input class="to" type="text" value="02/31/2013" />
+          <button class="month">Month</button>
+          <button class="week">Week</button>
+          <button class="all">All</button>
+          <br/>
+          <button>Show current range</button>
+        </div>
+        <br/>
+        <p class="fragment">But...</p>
+        <ul>
+          <li class="fragment">The widget state is scattered across differnt DOM elements.</li>
+          <li class="fragment">Still no single source of truth</li>
+        </ul>
+      </section>
+    </section>
+
+
+
+
+    <section>
+      <section>
+        <h3>An alternative solution: define a data model</h3>
+
+        <pre><code contenteditable>
+// Initialization
+function DateSelector(from, to) {
+  this.from = from;
+  this.to = to;
+  this.knownRanges = {
+    week:    { from: moment(to).subtract('days', 7).format("MM/DD/YYYY"), to: to },
+    month:   { from: moment(to).subtract('days', 30).format("MM/DD/YYYY"), to: to },
+    all:     { from: from, to: to }
+  };
+}
+        </code></pre>
+      </section>
+
+      <section>
+        <h3>Obect API</h3>
+
+        <pre><code contenteditable>
+DateSelector.prototype.setRange = function(name) {
+  var range = this.knownRanges[name];
+  this.from = range.from;
+  this.to = range.to;
+};
+
+DateSelector.prototype.inRange = function(name) {
+  var range = this.knownRanges[name];
+  return range.from === this.from && range.to === this.to;
+};
+
+DateSelector.prototype.currentRange = function(name) {
+  for (key in this.knownRanges)
+    if (this.inRange(key))
+      return key;
+};
+        </code></pre>
+      </section>
+
+      <section>
+        <h3>Advantages</h3>
+
+        <ul>
+          <li>A canonical source of information: no more scattering of data on the DOM</li>
+          <li>
+            Enables comprenhensive testing since it is so easy to test the data model:
+            <ul>
+              <li>instantiate object</li>
+              <li>call its methods</li>
+              <li>set expectations on the results</li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+
+      <section>
+        <h3>Glue code: bind the data model to the DOM</h3>
+
+        <pre><code contenteditable>
+// define a callback to perform 2-way data binding (DOM to model and model to DOM)
+var updateDomWithDS = function(newRange) {
+  return function() {
+    if (newRange) {
+      ds.setRange(newRange);
+      $from.val(ds.from); $to.val(ds.to); // Update DOM
+    } else {
+      ds.from = $from.val(); ds.to = $to.val(); // Update Model
+    }
+
+    // Update DOM
+    $buttonMonth.removeClass("selected");$buttonWeek.removeClass("selected");$buttonAll.removeClass("selected");
+    if      (ds.inRange("week"))  $buttonWeek.addClass("selected");
+    else if (ds.inRange("month")) $buttonMonth.addClass("selected");
+    else if (ds.inRange("all"))   $buttonAll.addClass("selected");
+  }
+};
+        </code></pre>
+      </section>
+
+      <section>
+        <h3>Actually apply the glue!</h3>
+
+        <pre><code contenteditable>
+// Bind Date Selector to the DOM
+$buttonMonth.on("click", updateDomWithDS("month"));
+$buttonWeek.on("click", updateDomWithDS("week"));
+$buttonAll.on("click", updateDomWithDS("all"));
+$from.on("keyup", updateDomWithDS());
+$to.on("keyup", updateDomWithDS());
+$buttonProfit.on("click", function(ev){ alert("Range selected is: " + ds.currentRange()); });
+        </code></pre>
+      </section>
+
+      <section>
+        <h3>End Result</h3>
+        <div id="widget3" class="widget">
+          <input class="from" type="text" value="01/01/2013" />
+          <input class="to" type="text" value="02/31/2013" />
+          <button class="month">Month</button>
+          <button class="week">Week</button>
+          <button class="all">All</button>
+          <br/>
+          <button>Show current range</button>
+        </div>
+      </section>
+    </section>
+
+
+
+
+    <section>
+      <section>
+        <h3>Better Glue for defining bindings:</h3>
+        <h4>Knockout.JS</h4>
+
+        <pre><code contenteditable>
+var ds = new DateSelector("01/01/2013", "02/31/2013");
+
+// Abbreviated code
+koBind(".from",  { value: ds.from });
+koBind(".to",    { value: ds.to   });
+
+koBind(".month", { click: setMonth }, css: { selected: isMonth }) })
+koBind(".week",  { click: setWeek  }, css: { selected: isWeek }) })
+koBind(".all",   { click: setAll   }, css: { selected: isAll }) })
+
+koBind("button:last" , { click: function() { alert("Range selected is: " + ds.currentRange()); }})
+        </code></pre>
+      </section>
+
+      <section>
+        <h3>Direct Bindings</h3>
+        <pre><code contenteditable>
+&lt;div id="widget1" class="widget"&gt;
+  &lt;input type="text" data-bind="{ value: from }"/&gt;
+  &lt;input type="text" data-bind="{ value: to   }"/&gt;
+  &lt;button data-bind="{ click: setMonth }, css: { selected: isMonth })"&gt;Month&lt;/button&gt;
+  &lt;button data-bind="{ click: setWeek  }, css: { selected: isWeek })"&gt;Week&lt;/button&gt;
+  &lt;button data-bind="{ click: setAll   }, css: { selected: isAll })"&gt;All&lt;/button&gt;
+  &lt;br/&gt;
+  &lt;button data-bind="{ click: showRange }"&gt;Profit!&lt;/button&gt;
+&lt;/div&gt;
+        </code></pre>
+      </section>
+
+      <section>
+        <h3>End Result</h3>
+        <div id="widget4" class="widget">
+          <input class="from" type="text" value="01/01/2013" />
+          <input class="to" type="text" value="02/31/2013" />
+          <button class="month">Month</button>
+          <button class="week">Week</button>
+          <button class="all">All</button>
+          <br/>
+          <button>Show current range</button>
+        </div>
+      </section>
+    </section>
+
+
+
+    <section>
+      <h4>Knockout Features</h4>
+      <ul>
+        <li>Declarative bindings</li>
+        <li>Automatic UI refresh</li>
+        <li>Dependency Tracking</li>
+        <li>Templating</li>
+      </ul>
+    </section>
+
+
+
+
+
+    <section>
+      <h4>Other tools that provide 2 way data bindings:</h4>
+      <img src="images/AngularJS-large.png" style="background-color: white;" />
+      <br/>
+      <img src="images/emberjs.png" style="background-color: white;" />
+    </section>
+
+
+
+
+
+    <section>
+      <h3>Take Aways</h3>
+      <ul>
+        <li>There's no need to encode state in the DOM.</li>
+        <li>When creating dynamic interfaces, design the classes/API first, bind later.</li>
+        <li>Testing data models versus DOM enconded interfaces is delightful!</li>
+        <li>There are plenty of tools to bind your models to the DOM, no need to manually write all that boilerplate!</li>
+      </ul>
+
+      <hr/>
+
+      <ul>
+        <li>Ability to create decoupled, easily changeable apps</li>
+        <li>Ability to create reusable components</li>
+        <li>Ability for a large team to work on a code base and understand each other's work</li>
+      </ul>
+
+      <h3>Thanks!</h3>
+    </section>
+
+
+
+
+
+
+
+    <section>
+      <section>
+        <h3>Some example tests from monitor-public</h3>
+        <p>
+          <pre><code contenteditable>
+  describe 'SaveModal', ->
+     it '#errorMessage', ->
+        mockRequest 'GET', /bookmarks/, [
+          { name: 'Google', url: "http://www.monitor.com?test=1"}
+        ]
+        user = new MonitorPublicApp.User
+
+        server.respond()
+
+        saveModal = new MonitorPublicApp.SaveModal(user)
+
+        saveModal.currentEntry('  ')
+        (expect saveModal.errorMessage()).toEqual 'Name must not be blank.'
+
+        saveModal.currentEntry('Google')
+        (expect saveModal.errorMessage()).toEqual 'That name is taken.'
+          </code></pre>
+        </p>
+      </section>
+
+      <section>
+        <h3>Full Flow Testing</h3>
+        <p>
+          <pre><code contenteditable>
+    it "Loads a report with saved comparisons and enters and saves a new one", ->
+      countReport = new MonitorPublicApp.CountReport
+      server.respond() # Respond with bookmarks
+
+      expect(countReport.title()).toEqual 'Comparisons'
+      expect(countReport.savedStatusMessage()).toEqual 'Save Changes'
+
+      countReport.showSaveModal() # Open modal
+
+      countReport.saveModal.currentEntry('NewEntry') # Doesn't already exist
+      expect(countReport.saveModal.isInvalidInput()).toBe false
+
+      countReport.saveModal.onAction() # Trigger save action in modal
+      server.respond()
+
+      (expect countReport.user.bookmarks().length).toEqual 3
+      (expect countReport.title()).toEqual 'NewEntry'
+      (expect countReport.savedStatusMessage()).toEqual 'Saved!'
+      (expect countReport.user.viewingSavedBookmark()).toBe true
+          </code></pre>
+        </p>
+      </section>
+
+    </section>
+
+  </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.min.js"></script>
+
+<script>
+  // Full list of configuration options available here:
+  // https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+    center: true,
+
+    theme: "night", // available themes are in /css/theme
+    transition: 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+    // Optional libraries used to extend on reveal.js
+    dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+      { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+      // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+    ]
+  });
+</script>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/knockout-2.2.1.js"></script>
+<script src="js/moment.min.js"></script>
+<script src="js/demos/demo1.js"></script>
+<script src="js/demos/demo1b.js"></script>
+<script src="js/demos/demo2.js"></script>
+<script src="js/demos/demo3.js"></script>
+
+</body>
+</html>
