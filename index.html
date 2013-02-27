@@ -12,7 +12,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<link rel="stylesheet" href="css/reveal.min.css">
+<link rel="stylesheet" href="css/reveal.css">
 <link rel="stylesheet" href="css/theme/default.css" id="theme">
 
 <!-- For syntax highlighting -->
@@ -234,6 +234,28 @@ class DateSelector
       </section>
 
       <section>
+        <h3>Sample Data Model Test</h3>
+
+        <pre><code contenteditable>
+dateSelector = new DateSelector("01/01/2013", "28/02/2013")
+
+it "defaults to showing the whole range", ->
+  expect(dateSelector.currentRange()).toEqual "all"
+
+it "allows changing ranges", ->
+  expect(dateSelector.inRange("all")).toEqual true
+  expect(dateSelector.inRange("week")).toEqual false
+  expect(dateSelector.currentRange()).toEqual "all"
+
+  dateSelector.setRange "week"
+
+  expect(dateSelector.inRange("all")).toEqual false
+  expect(dateSelector.inRange("week")).toEqual true
+  expect(dateSelector.currentRange()).toEqual "week"
+        </code></pre>
+      </section>
+
+      <section>
         <h3>...requirements</h3>
         <ul>
           <li>Create decoupled, easily changeable apps</li>
@@ -265,7 +287,6 @@ $buttonMonth.on "click", ->
 $from.on "keyup", ->
   ds.from = $from.val(); ds.to = $to.val(); syncButtonsAndInputs()
         </code></pre>
-        <p class="fragment">This glue doesn't make it easier for the team to understand each other's work..</li>
       </section>
 
       <section>
