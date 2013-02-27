@@ -277,13 +277,13 @@ body {
 .reveal pre {
 	display: block;
 	position: relative;
-	width: 90%;
-	margin: 15px auto;
+	width: 150%;
+	margin: 4px auto auto -25%;
 
 	text-align: left;
-	font-size: 0.55em;
+	font-size: 0.8em;
 	font-family: monospace;
-	line-height: 1.2em;
+	line-height: 1.1em;
 
 	word-wrap: break-word;
 
@@ -291,12 +291,13 @@ body {
 }
 .reveal pre code {
 	padding: 5px;
+	padding-left: 25px;
 }
 
 .reveal code {
 	font-family: monospace;
 	overflow: auto;
-	max-height: 400px;
+	max-height: 500px;
 }
 
 .reveal table th,
@@ -1257,3 +1258,14 @@ body {
 .zoomed .reveal .roll span:after {
 	visibility: hidden;
 }
+
+
+.widget * { font-size: 1em; }
+.widget input { width: 40%; }
+.widget { background-color: #ccc; border: 2px solid white; }
+.widget button, .widget input { margin: 0.5em; }
+.widget button.selected { border: 1px solid red; }
+
+section h3 { color: #aaf !important; }
+
+.result { color: #aaf; }
