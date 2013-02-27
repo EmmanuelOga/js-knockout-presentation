@@ -153,12 +153,13 @@ syncButtonsAndInputs = () ->
   $buttonWeek.removeClass("selected")
   $buttonAll.removeClass("selected")
 
-  $buttonAll.addClass("selected")   if ($from.val() == min && $to.val() == max)
-  $buttonMonth.addClass("selected") if ($from.val() == monthAgo && $to.val() == max)
-  $buttonWeek.addClass("selected")  if ($from.val() == weekAgo && $to.val() == max)
+  $buttonAll.addClass("selected")   if $from.val() == min      and $to.val() == max
+  $buttonMonth.addClass("selected") if $from.val() == monthAgo and $to.val() == max
+  $buttonWeek.addClass("selected")  if $from.val() == weekAgo  and $to.val() == max
 
 $buttonMonth.on "click", (ev) ->
   $from.val(monthAgo); $to.val(max); syncButtonsAndInputs();
+
 $from.on "keyup", syncButtonsAndInputs
 $to.on "keyup", syncButtonsAndInputs
         </code></pre>
@@ -235,6 +236,7 @@ class DateSelector
 
       <section>
         <h3>Sample Data Model Test</h3>
+        <a target="_blank" href="specs/SpecRunner.html">Run!</a>
 
         <pre><code contenteditable>
 dateSelector = new DateSelector("01/01/2013", "28/02/2013")
