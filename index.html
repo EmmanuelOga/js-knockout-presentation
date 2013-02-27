@@ -35,10 +35,16 @@ document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.se
   <div class="slides">
 
     <section>
-      <h1>Data Models for Javascript Apps</h1>
-      <h3>a.k.a. Indiana Jones and the Single Source of Truth</h3>
+      <h1>Indiana Jones and the Single Source of Truth</h1>
+      <h3>Data Models for Javascript Apps</h3>
     </section>
 
+
+
+    <section>
+      <h1>Translation</h1>
+      <h3>Booton = Button</h3>
+    </section>
 
 
 
@@ -130,8 +136,6 @@ $buttonProfit.on "click", (ev) ->
         <p class="fragment">Oh no...</p>
         <ul>
           <li class="fragment">The buttons are not synchronized with the inputs</li>
-          <li class="fragment">What is the source of truth about the selected range? the selected button or the from-to ranges?</li>
-          <li class="fragment">Can be either one!</li>
         </ul>
       </section>
     </section>
@@ -174,7 +178,7 @@ $to.on "keyup", syncButtonsAndInputs
         <br/>
         <p class="fragment">But...</p>
         <ul>
-          <li class="fragment">The widget state is scattered across differnt DOM elements.</li>
+          <li class="fragment">The widget state is scattered across different DOM elements.</li>
           <li class="fragment">Still no single source of truth</li>
         </ul>
 
@@ -229,7 +233,22 @@ class DateSelector
         </ul>
       </section>
 
+      <section>
+        <h3>...requirements</h3>
+        <ul>
+          <li>Create decoupled, easily changeable apps</li>
+          <li>Create reusable components</li>
+          <li>Make it easier for the team to work on a code base and understand each other's work</li>
+        </ul>
+      </section>
+    </section>
 
+
+
+
+
+
+    <section>
       <section>
         <h3>Glue code: bind the data model to the DOM</h3>
         <pre><code contenteditable>
@@ -246,16 +265,20 @@ $buttonMonth.on "click", ->
 $from.on "keyup", ->
   ds.from = $from.val(); ds.to = $to.val(); syncButtonsAndInputs()
         </code></pre>
+        <p class="fragment">This glue doesn't make it easier for the team to understand each other's work..</li>
       </section>
-    </section>
 
+      <section>
+        <h3>Better Glue for defining bindings:</h3>
+        <h4>Knockout.JS</h4>
+        <pre><code contenteditable>
+  var ds = new DateSelector("01/01/2013", "02/31/2013");
+  ko.applyBindings window.document.getElementByID("widget5")
+        </code></pre>
+      </section>
 
-
-
-    <section>
-      <h3>Better Glue for defining bindings:</h3>
-      <h4>Knockout.JS</h4>
-      <pre><code contenteditable>
+      <section>
+        <pre><code contenteditable>
 &lt;div id="widget5" class="widget"&gt;
   &lt;input type="text" data-bind="{ value: from }"/&gt;
   &lt;input type="text" data-bind="{ value: to   }"/&gt;
@@ -265,11 +288,8 @@ $from.on "keyup", ->
   &lt;br/&gt;
   &lt;button data-bind="{click: showRange }"&gt;Profit!&lt;/button&gt;
 &lt;/div&gt;
-      </code></pre>
-      <pre><code contenteditable>
-var ds = new DateSelector("01/01/2013", "02/31/2013");
-ko.applyBindings window.document.getElementByID("widget5")
-      </code></pre>
+        </code></pre>
+      </section>
     </section>
 
 
@@ -285,36 +305,6 @@ ko.applyBindings window.document.getElementByID("widget5")
         <li>Templating</li>
       </ul>
     </section>
-
-
-
-
-
-    <section>
-      <h4>Other tools that provide 2 way data bindings:</h4>
-      <img src="images/AngularJS-large.png" style="background-color: white;" />
-      <br/>
-      <img src="images/emberjs.png" style="background-color: white;" />
-    </section>
-
-
-
-
-    <section>
-      <h3>Overarching requirements</h3>
-      <ul>
-        <li>Create decoupled, easily changeable apps
-        <p class="fragment result">Logic and presentation is separated. Is easier to create different views for the same model or add more logic.</p></li>
-
-        <li>Create reusable components
-        <p class="fragment result">To reuse a component, create another instance and bind it to the DOM.</p></li>
-
-        <li>Make it easier for the team to work on a code base and understand each other's work
-        <p class="fragment result">Removed the need to write tons of boilerplate code, DOM interaction is mostly managed for us.</p></li>
-      </ul>
-    </section>
-
-
 
 
 
@@ -371,6 +361,41 @@ ko.applyBindings window.document.getElementByID("widget5")
         </p>
       </section>
 
+    </section>
+
+
+
+
+
+    <section>
+      <h4>Other tools that provide 2 way data bindings:</h4>
+      <img src="images/AngularJS-large.png" style="background-color: white;" />
+      <br/>
+      <img src="images/emberjs.png" style="background-color: white;" />
+    </section>
+
+
+
+
+    <section>
+      <h3>Overarching requirements</h3>
+      <ul>
+        <li>Create decoupled, easily changeable apps
+        <p class="fragment result">Logic and presentation is separated. Is easier to create different views for the same model or add more logic.</p></li>
+
+        <li>Create reusable components
+        <p class="fragment result">To reuse a component, create another instance and bind it to the DOM.</p></li>
+
+        <li>Make it easier for the team to work on a code base and understand each other's work
+        <p class="fragment result">Removed the need to write tons of boilerplate code.</p></li>
+      </ul>
+    </section>
+
+
+
+    <section>
+      <h4>Thanks!</h4>
+      <h1>Conversations?</h1>
     </section>
 
   </div>
