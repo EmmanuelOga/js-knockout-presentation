@@ -336,31 +336,33 @@ $from.on "keyup", ->
       <section>
         <h3>Some example tests from monitor-public</h3>
         <p>
-          <pre><code contenteditable>
+          <pre>
+            <code class='fragment'>
+
   describe 'SaveModal', ->
-     it '#errorMessage', ->
-        mockRequest 'GET', /bookmarks/, [
-          { name: 'Google', url: "http://www.monitor.com?test=1"}
-        ]
+     it 'Validates input', ->
         user = new MonitorPublicApp.User
 
         server.respond()
-
+        </code>
+        <code class='fragment'>
         saveModal = new MonitorPublicApp.SaveModal(user)
-
+        </code>
+        <code class='fragment'>
         saveModal.currentEntry('  ')
         (expect saveModal.errorMessage()).toEqual 'Name must not be blank.'
 
         saveModal.currentEntry('Google')
         (expect saveModal.errorMessage()).toEqual 'That name is taken.'
-          </code></pre>
+            </code>
+          </pre>
         </p>
       </section>
 
       <section>
         <h3>Full Flow Testing</h3>
         <p>
-          <pre><code contenteditable>
+          <pre><code>
     it "Loads a report with saved comparisons and enters and saves a new one", ->
       countReport = new MonitorPublicApp.CountReport
       server.respond() # Respond with bookmarks
