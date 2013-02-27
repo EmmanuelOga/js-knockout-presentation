@@ -277,11 +277,11 @@ body {
 .reveal pre {
 	display: block;
 	position: relative;
-	width: 150%;
-	margin: 4px auto auto -25%;
+	width: 125%;
+	margin: 4px auto auto -12.5%;
 
 	text-align: left;
-	font-size: 0.9em;
+	font-size: 0.75em;
 	font-family: monospace;
 	line-height: 1.1em;
 
@@ -291,7 +291,7 @@ body {
 }
 .reveal pre code {
 	padding: 5px;
-	padding-left: 25px;
+	padding-left: 10px;
 }
 
 .reveal code {
