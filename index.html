@@ -67,13 +67,13 @@ document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.se
 
 
     <section>
-      <h3>Overarching requirements</h3>
+      <h3>Goals</h3>
       <ul>
         <li>Create decoupled, easily changeable apps</li>
         <li>Create reusable components</li>
         <li>Make it easier for the team to work on a code base and understand each other's work</li>
       </ul>
-      <p class="fragment">The solution...</p>
+      <p class="fragment">The first solution...</p>
       <h2 class="fragment">jQuery all the things!</h2>
     </section>
 
@@ -182,11 +182,6 @@ $to.on "keyup", syncButtonsAndInputs
           <li class="fragment">The widget state is scattered across different DOM elements.</li>
           <li class="fragment">Still no single source of truth</li>
         </ul>
-
-        <pre class="fragment"><code contenteditable>
-$buttonProfit.on "click", (ev) ->
-  alert $("button.selected:first").attr("class");
-        </code></pre>
       </section>
     </section>
 
@@ -258,7 +253,7 @@ it "allows changing ranges", ->
       </section>
 
       <section>
-        <h3>...requirements</h3>
+        <h3>Goals</h3>
         <ul>
           <li>Create decoupled, easily changeable apps</li>
           <li>Create reusable components</li>
@@ -404,7 +399,7 @@ $from.on "keyup", ->
 
 
     <section>
-      <h3>Overarching requirements</h3>
+      <h3>Goals</h3>
       <ul>
         <li>Create decoupled, easily changeable apps
         <p class="fragment result">Logic and presentation is separated. Is easier to create different views for the same model or add more logic.</p></li>
